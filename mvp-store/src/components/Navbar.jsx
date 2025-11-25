@@ -1,7 +1,7 @@
 import { Menubar } from "primereact/menubar";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
-import { useCart } from "../context/CartContext.jsx";
+import { useAuth } from "../contexts/AuthContext.jsx";
+import { useCart } from "../contexts/CartContext.jsx";
 import { Badge } from "primereact/badge";
 import { Button } from "primereact/button";
 

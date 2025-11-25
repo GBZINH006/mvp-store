@@ -1,43 +1,71 @@
 import { useEffect, useState } from "react";
-import { api } from "../services/api.js";
-import ProductCard from "../components/ProductCard.jsx";
-import { Skeleton } from "primereact/skeleton";
+import { Link } from "react-router-dom";
 
-export default function Home({ toastRef }) {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    api.get("/products")
-      .then((res) => setProducts(res.data))
-      .catch((err) => {
-        console.error(err);
-        toastRef?.current?.show({ severity: "error", summary: "Erro", detail: "Não foi possível carregar produtos" });
-      })
-      .finally(() => setLoading(false));
-  }, []);
+export default function Home() {
+const [products, setProducts] = useState([]);
+const [search, setSearch] = useState("");
 
-  return (
-    <div className="p-4">
-      <h2 className="page-title">Produtos em destaque</h2>
 
-      {loading ? (
-        <div className="grid">
-          {[1,2,3,4,5,6,7,8].map((i)=>(
-            <div key={i} className="col-12 md:col-6 lg:col-3 p-3">
-              <Skeleton width="100%" height="180px" />
-              <Skeleton width="80%" height="1.2rem" className="mt-2" />
-              <Skeleton width="40%" height="1.2rem" className="mt-2" />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="grid">
-          {products.map((p) => (
-            <ProductCard key={p.id} p={p} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
+useEffect(() => {
+fetch("https://fakestoreapi.com/products")
+.then((res) => res.json())
+.then((data) => setProducts(data));
+}, []);
+
+
+const filtered = products.filter((p) =>
+p.title.toLowerCase().includes(search.toLowerCase())
+);
+
+
+return (
+<div style={styles.container}>
+<h1 style={styles.title}>Loja Online</h1>
+
+
+<input
+placeholder="Pesquisar produto..."
+style={styles.search}
+value={search}
+onChange={(e) => setSearch(e.target.value)}
+/>
+
+
+<div style={styles.grid}>
+{filtered.map((p) => (
+<Link key={p.id} to={`/product/${p.id}`} style={styles.card}>
+<img src={p.image} style={styles.img} />
+<h3>{p.title}</h3>
+<p>R$ {p.price}</p>
+</Link>
+))}
+</div>
+</div>
+);
+}
+
+
+const styles = {
+container: { padding: 20 },
+title: { textAlign: "center" },
+search: {
+width: "100%",
+padding: 12,
+borderRadius: 8,
+border: "1px solid #aaa",
+marginBottom: 20,
+},
+grid: {
+display: "grid",
+gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+gap: 20,
+},
+card: {
+display: "block",
+padding: 15,
+borderRadius: 12,
+boxShadow: "0 0 10px #ddd",
+background: "#fff",
+}
 }

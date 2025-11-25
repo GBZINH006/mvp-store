@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const CartContext = createContext();
 
@@ -16,23 +16,19 @@ export function CartProvider({ children }) {
   }, [cart]);
 
   function addToCart(product, qty = 1) {
-    setCart((prev) => {
-      const found = prev.find((p) => p.id === product.id);
-      if (found) {
-        return prev.map((p) =>
-          p.id === product.id ? { ...p, qty: p.qty + qty } : p
-        );
-      }
+    setCart(prev => {
+      const found = prev.find(p => p.id === product.id);
+      if (found) return prev.map(p => p.id === product.id ? { ...p, qty: p.qty + qty } : p);
       return [...prev, { ...product, qty }];
     });
   }
 
   function removeFromCart(id) {
-    setCart((prev) => prev.filter((p) => p.id !== id));
+    setCart(prev => prev.filter(p => p.id !== id));
   }
 
   function updateQty(id, qty) {
-    setCart((prev) => prev.map((p) => (p.id === id ? { ...p, qty } : p)));
+    setCart(prev => prev.map(p => p.id === id ? { ...p, qty } : p));
   }
 
   function clearCart() {
@@ -42,9 +38,7 @@ export function CartProvider({ children }) {
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
 
   return (
-    <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateQty, clearCart, total }}
-    >
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQty, clearCart, total }}>
       {children}
     </CartContext.Provider>
   );

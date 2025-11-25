@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../services/api.js";
-import { useCart } from "../context/CartContext.jsx";
+import { useCart } from "../contexts/CartContext.jsx";
 import { Button } from "primereact/button";
 import { InputNumber } from "primereact/inputnumber";
 

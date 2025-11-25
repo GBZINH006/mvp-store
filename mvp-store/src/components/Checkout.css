@@ -1,0 +1,7 @@
+.checkout-body{ display:flex; gap:18px; }
+.cart-summary{ flex:1; }
+.address-box{ flex:1; }
+.summary-items{ max-height:260px; overflow:auto; display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+.line{ display:flex; justify-content:space-between; align-items:center; }
+.total-line{ margin-top:8px; font-weight:800; }
+.addr{ margin-top:8px; background:#fbfbff; padding:10px; border-radius:8px; }

@@ -1,4 +1,4 @@
-import { useCart } from "../context/CartContext.jsx";
+import { useCart } from "../contexts/CartContext.jsx";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { InputNumber } from "primereact/inputnumber";

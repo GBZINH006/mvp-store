@@ -1,71 +1,79 @@
 import { useState } from "react";
-import { Card } from "primereact/card";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 
-export default function Admin({ toastRef }) {
-  const [items, setItems] = useState([]);
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [image, setImage] = useState("");
 
-  function add() {
-    if (!title || !price) {
-      toastRef?.current?.show({ severity: "warn", summary: "Preencha", detail: "Título e preço obrigatórios" });
-      return;
-    }
-    const newItem = { id: Date.now(), title, price: parseFloat(price), image };
-    setItems((s)=> [newItem, ...s]);
-    setTitle(""); setPrice(""); setImage("");
-    toastRef?.current?.show({ severity: "success", summary: "Pronto", detail: "Produto criado (local)" });
-  }
+export default function Admin() {
+const [cep, setCep] = useState("");
+const [address, setAddress] = useState(null);
+const [cepError, setCepError] = useState(false);
 
-  function del(id) {
-    setItems((s)=> s.filter(i=> i.id !== id));
-    toastRef?.current?.show({ severity: "info", summary: "Removido" });
-  }
 
-  const actionTemplate = (row) => (
-    <Button icon="pi pi-trash" severity="danger" className="p-button-text" onClick={() => del(row.id)} />
-  );
+const handleCep = async (v) => {
+setCep(v);
 
-  return (
-    <div className="p-4">
-      <h2>Admin (CRUD local)</h2>
 
-      <Card className="p-3 mb-3">
-        <div className="grid">
-          <div className="col-12 md:col-4">
-            <label>Título</label>
-            <InputText value={title} onChange={(e)=> setTitle(e.target.value)} className="w-full" />
-          </div>
+if (v.length === 8) {
+const res = await fetch(`https://viacep.com.br/ws/${v}/json/`);
+const data = await res.json();
 
-          <div className="col-12 md:col-3">
-            <label>Preço</label>
-            <InputText value={price} onChange={(e)=> setPrice(e.target.value)} className="w-full" />
-          </div>
 
-          <div className="col-12 md:col-5">
-            <label>URL imagem</label>
-            <InputText value={image} onChange={(e)=> setImage(e.target.value)} className="w-full" />
-          </div>
-
-          <div className="col-12 mt-3">
-            <Button label="Adicionar" icon="pi pi-plus" onClick={add} />
-          </div>
-        </div>
-      </Card>
-
-      <Card>
-        <DataTable value={items} paginator rows={6}>
-          <Column field="title" header="Título" />
-          <Column field="price" header="Preço" body={(row) => `R$ ${row.price?.toFixed(2)}`} />
-          <Column field="image" header="Imagem" body={(row)=> row.image ? <img src={row.image} alt={row.title} style={{height:50}} /> : "-" } />
-          <Column header="Ações" body={actionTemplate} />
-        </DataTable>
-      </Card>
-    </div>
-  );
+if (data.erro) {
+setCepError(true);
+setAddress(null);
+} else {
+setCepError(false);
+setAddress(data);
 }
+}
+};
+
+
+return (
+<div style={styles.container}>
+<h1>Painel Admin</h1>
+
+
+<div style={styles.card}>
+<h3>Consultar CEP</h3>
+<input
+placeholder="Digite o CEP"
+maxLength={8}
+style={styles.input}
+value={cep}
+onChange={(e) => handleCep(e.target.value)}
+/>
+
+
+{cepError && <p style={{ color: "red" }}>CEP inválido 😒</p>}
+
+
+{address && (
+<div style={styles.result}>
+<p><b>Rua:</b> {address.logradouro}</p>
+<p><b>Bairro:</b> {address.bairro}</p>
+<p><b>Cidade:</b> {address.localidade}</p>
+<p><b>UF:</b> {address.uf}</p>
+</div>
+)}
+</div>
+</div>
+);
+}
+
+
+const styles = {
+container: { padding: 20 },
+card: {
+marginTop: 20,
+padding: 25,
+background: "#fff",
+borderRadius: 14,
+boxShadow: "0 0 12px #ccc",
+width: 350,
+},
+input: {
+width: "100%",
+padding: 12,
+borderRadius: 8,
+border: "1px solid #bbb",
+marginBottom: 12,
+}}
