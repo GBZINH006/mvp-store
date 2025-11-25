@@ -1,0 +1,10 @@
+body {
+margin: 0;
+background: #f6f6ff;
+font-family: 'Poppins', sans-serif;
+}
+
+
+* {
+transition: 0.2s ease;
+}
