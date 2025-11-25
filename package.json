@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@react-spring/web": "^10.0.3",
-    "primeicons": "^7.0.0",
-    "primereact": "^10.9.7"
-  }
-}
