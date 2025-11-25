@@ -1,32 +1,37 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Details from "./pages/Details";
-import Cart from "./pages/Cart";
-import Login from "./pages/Login";
-import Admin from "./pages/Admin";
-import Navbar from "./components/Navbar";
-import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar.jsx";
+import Home from "./pages/Home.jsx";
+import Details from "./pages/Details.jsx";
+import Cart from "./pages/Cart.jsx";
+import Login from "./pages/Login.jsx";
+import Admin from "./pages/Admin.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { Toast } from "primereact/toast";
+import { useRef } from "react";
 
 export default function App() {
+  const toastRef = useRef(null);
+
   return (
-    <div className="min-h-screen">
+    <>
+      <Toast ref={toastRef} />
       <Navbar />
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/details/:id" element={<Details />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/login" element={<Login />} />
-
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <Admin />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </div>
+      <div className="app-container">
+        <Routes>
+          <Route path="/" element={<Home toastRef={toastRef} />} />
+          <Route path="/details/:id" element={<Details toastRef={toastRef} />} />
+          <Route path="/cart" element={<Cart toastRef={toastRef} />} />
+          <Route path="/login" element={<Login toastRef={toastRef} />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <Admin toastRef={toastRef} />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </div>
+    </>
   );
 }

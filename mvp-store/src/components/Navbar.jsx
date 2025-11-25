@@ -1,24 +1,38 @@
-import { link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
-import { motion } from "framer-motion";
+import { Menubar } from "primereact/menubar";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
+import { useCart } from "../context/CartContext.jsx";
+import { Badge } from "primereact/badge";
+import { Button } from "primereact/button";
 
 export default function Navbar() {
-const { cart } = useCart();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const { cart } = useCart();
 
-return (
-<motion.Nav
-initial={{y: -30, opacity: 0}}
-animate={{y: 0, opacity: 1}}
-transition={{ duration: 0.5 }}
-classname="p-3 shadow-2 flex alingn-center justify-between bg-white"
->
-<Link to="/" classname="text-2xl font-bold">ShopX</Link>
+  const items = [
+    { label: "Home", icon: "pi pi-home", command: () => navigate("/") },
+    { label: "Produtos", icon: "pi pi-tags", command: () => navigate("/") },
+    { label: "Carrinho", icon: "pi pi-shopping-cart", command: () => navigate("/cart") },
+  ];
 
-<div classname="flex gap-3">
-<link to="/">home</link>
-<link to="/cart">carrinho ({cart.length})</link>
-<link to="/login">login</link>
-</div>
-</motion.nav>
-);
+  const end = (
+    <div className="flex align-items-center gap-3">
+      <Link to="/cart" className="cart-link">
+        <i className="pi pi-shopping-cart" />
+        <Badge value={cart.length} severity="info" className="ml-2" />
+      </Link>
+
+      {user ? (
+        <>
+          <span className="user-text">Olá, {user.email}</span>
+          <Button label="Sair" className="p-button-text" onClick={logout} />
+        </>
+      ) : (
+        <Button label="Login" icon="pi pi-sign-in" onClick={() => navigate("/login")} />
+      )}
+    </div>
+  );
+
+  return <Menubar model={items} end={end} />;
 }

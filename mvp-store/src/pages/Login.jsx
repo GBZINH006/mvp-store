@@ -1,54 +1,38 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
-import { motion } from "framer-motion";
 
-export default function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+export default function Login({ toastRef }) {
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
   const { login } = useAuth();
+  const navigate = useNavigate();
 
-  function handleSubmit() {
-    const ok = login(username, password);
-    if (ok) navigate("/admin");
-    else alert("Usuário ou senha incorretos");
+  function handle() {
+    const ok = login(email, pass);
+    if (ok) {
+      toastRef?.current?.show({ severity: "success", summary: "Bem vindo", detail: email });
+      navigate("/admin");
+    } else {
+      toastRef?.current?.show({ severity: "error", summary: "Erro", detail: "Credenciais inválidas" });
+    }
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex justify-content-center p-4"
-    >
-      <Card title="Login" className="w-20rem shadow-4 p-3">
-        <div className="flex flex-column gap-3">
-          <span className="p-float-label">
-            <InputText
-              id="user"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <label htmlFor="user">Usuário</label>
-          </span>
-
-          <span className="p-float-label">
-            <Password
-              id="pass"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              feedback={false}
-            />
-            <label htmlFor="pass">Senha</label>
-          </span>
-
-          <Button label="Entrar" onClick={handleSubmit} className="w-full" />
+    <div className="p-4 flex justify-content-center">
+      <Card title="Acesso Admin" className="w-20rem">
+        <div className="p-fluid">
+          <label>Email</label>
+          <InputText value={email} onChange={(e)=> setEmail(e.target.value)} />
+          <label className="mt-2">Senha</label>
+          <Password value={pass} onChange={(e)=> setPass(e.target.value)} feedback={false} />
+          <Button label="Entrar" className="mt-3 w-full" onClick={handle} />
         </div>
       </Card>
-    </motion.div>
+    </div>
   );
 }

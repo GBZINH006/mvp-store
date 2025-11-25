@@ -1,5 +1,6 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: "htpps://fakestoreapi.com/"
+  baseURL: "https://fakestoreapi.com/",
+  timeout: 10000,
 });
