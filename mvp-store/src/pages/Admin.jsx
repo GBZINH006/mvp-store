@@ -1,79 +1,46 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
+export default function Admin({ addProduct, products = [] }) {
+  const [title, setTitle] = useState("");
+  const [price, setPrice] = useState("");
+  const [image, setImage] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
 
-export default function Admin() {
-const [cep, setCep] = useState("");
-const [address, setAddress] = useState(null);
-const [cepError, setCepError] = useState(false);
+  function save() {
+    if (!title || !price || !image) return alert("Preencha nome, preço e imagem.");
+    addProduct({ title, price: Number(price), image, category, description });
+    setTitle(""); setPrice(""); setImage(""); setCategory(""); setDescription("");
+  }
 
+  return (
+    <div className="admin-wrap">
+      <div className="admin-header">
+        <div>
+          <h2>Admin — Adicionar produto</h2>
+          <p className="muted">Os itens adicionados aparecem automaticamente na Home.</p>
+        </div>
+      </div>
 
-const handleCep = async (v) => {
-setCep(v);
+      <div className="admin-form">
+        <input className="admin-input" placeholder="Título" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input className="admin-input" placeholder="Preço (ex: 49.9)" value={price} onChange={(e) => setPrice(e.target.value)} />
+        <input className="admin-input" placeholder="URL da imagem" value={image} onChange={(e) => setImage(e.target.value)} />
+        <input className="admin-input" placeholder="Categoria" value={category} onChange={(e) => setCategory(e.target.value)} />
+        <textarea className="admin-input" placeholder="Descrição (opcional)" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
+        <button className="admin-btn" onClick={save}>Adicionar produto</button>
+      </div>
 
-
-if (v.length === 8) {
-const res = await fetch(`https://viacep.com.br/ws/${v}/json/`);
-const data = await res.json();
-
-
-if (data.erro) {
-setCepError(true);
-setAddress(null);
-} else {
-setCepError(false);
-setAddress(data);
+      <h3 style={{ marginTop: 18 }}>Produtos cadastrados (preview)</h3>
+      <div className="products-grid" style={{ marginTop: 10 }}>
+        {products.slice(0, 8).map((p) => (
+          <div key={p.id} className="product-card">
+            <img src={p.image} alt={p.title} />
+            <div style={{ marginTop: 8, fontWeight: 700 }}>{p.title}</div>
+            <div style={{ color: "#2563eb", fontWeight: 800 }}>R$ {Number(p.price).toFixed(2)}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
-}
-};
-
-
-return (
-<div style={styles.container}>
-<h1>Painel Admin</h1>
-
-
-<div style={styles.card}>
-<h3>Consultar CEP</h3>
-<input
-placeholder="Digite o CEP"
-maxLength={8}
-style={styles.input}
-value={cep}
-onChange={(e) => handleCep(e.target.value)}
-/>
-
-
-{cepError && <p style={{ color: "red" }}>CEP inválido 😒</p>}
-
-
-{address && (
-<div style={styles.result}>
-<p><b>Rua:</b> {address.logradouro}</p>
-<p><b>Bairro:</b> {address.bairro}</p>
-<p><b>Cidade:</b> {address.localidade}</p>
-<p><b>UF:</b> {address.uf}</p>
-</div>
-)}
-</div>
-</div>
-);
-}
-
-
-const styles = {
-container: { padding: 20 },
-card: {
-marginTop: 20,
-padding: 25,
-background: "#fff",
-borderRadius: 14,
-boxShadow: "0 0 12px #ccc",
-width: 350,
-},
-input: {
-width: "100%",
-padding: 12,
-borderRadius: 8,
-border: "1px solid #bbb",
-marginBottom: 12,
-}}

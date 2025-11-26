@@ -1,46 +1,30 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { Button } from "primereact/button";
-import { useCart } from "../contexts/CartContext.jsx";
-import "./detailModal.css";
 
-export default function ProductDetailModal({ product, visible, onClose }) {
-  const { addToCart } = useCart();
-
-  if (!visible || !product) return null;
-
-  function handleAdd() {
-    addToCart(product, 1);
-    // visual + feedback
-    const el = document.createElement("div");
-    el.className = "fly-item";
-    el.innerText = "+1";
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 800);
-  }
+export default function ProductModal({ product, onClose, onAdd }) {
+  if (!product) return null;
 
   return (
-    <div className="overlay" onClick={onClose}>
-      <motion.div className="detail-modal"
-        initial={{ scale: 0.7, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="detail-left">
-          <img src={product.image} alt={product.title} />
-        </div>
-
-        <div className="detail-right">
-          <h2>{product.title}</h2>
-          <p className="cat">{product.category}</p>
-          <p className="desc">{product.description}</p>
-          <div className="detail-row">
-            <div className="price">R$ {product.price.toFixed(2).replace(".", ",")}</div>
-            <Button label="Adicionar ao carrinho" icon="pi pi-shopping-cart" onClick={handleAdd} />
+    <div className="product-modal-overlay" onClick={onClose}>
+      <div className="product-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-grid">
+          <div className="modal-left">
+            <img src={product.image} alt={product.title} className="detail-img" />
           </div>
-          <Button label="Fechar" className="p-button-text mt-3" onClick={onClose} />
+
+          <div className="modal-right">
+            <h2 className="modal-title">{product.title}</h2>
+            <p className="modal-cat">{product.category}</p>
+            <p className="modal-desc">{product.description}</p>
+            <div className="modal-row">
+              <div className="product-price">R$ {Number(product.price).toFixed(2).replace(".", ",")}</div>
+              <div className="modal-actions">
+                <button className="add-btn" onClick={() => onAdd(product)}>Adicionar</button>
+                <button className="close-modal" onClick={onClose}>Fechar</button>
+              </div>
+            </div>
+          </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
